@@ -23,7 +23,7 @@ To do so the demuxxer is configured with `Factory` and `Handler` instances.
 Factories are responsible for determining the type of the event (based off the incoming JSON) and creating an instance of that event.
 
 Handlers are responsible for, well, handling that event.  Handlers are as used in [aws-lambda-go ](https://github.com/aws/aws-lambda-go), with the restriction
-of having a signature of `func(context.Context, *eventType) (*responseType, error)`.
+of having a signature of `func(context.Context, *eventType) (*responseType, error)`.  `eventType` and `responseType` can be any struct with the appropriate json tags to map from the event JSON.
 
 A minimal usage showing a lambda that handles REST API request and Websocket lifecycle events:
 
