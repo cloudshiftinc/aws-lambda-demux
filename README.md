@@ -9,5 +9,5 @@
 [4]: https://pkg.go.dev/github.com/cloudshiftinc/aws-lambda-demux
 [5]: https://goreportcard.com/badge/github.com/cloudshiftinc/aws-lambda-demux
 [6]: https://goreportcard.com/report/github.com/cloudshiftinc/aws-lambda-demux
-[7]: https://codecov.io/gh/cloudshiftinc/aws-lambda-demux/branch/master/graph/badge.svg
+[7]: https://codecov.io/gh/cloudshiftinc/aws-lambda-demux/branch/main/graph/badge.svg
 [8]: https://codecov.io/gh/cloudshiftinc/aws-lambda-demux
