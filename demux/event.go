@@ -54,7 +54,10 @@ func processEvent(
 	args[1] = reflect.ValueOf(event)
 	returnValues := handlerFn.Call(args)
 
-	return returnValues[0].Interface(), returnValues[1].Interface().(error)
+	if errVal, ok := returnValues[1].Interface().(error); ok && errVal != nil {
+		return nil, errVal
+	}
+	return returnValues[0].Interface(), nil
 }
 
 func createEvent(rawEvent RawEvent, eventFactories []Factory) any {

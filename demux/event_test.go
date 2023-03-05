@@ -47,3 +47,36 @@ func TestCreateEventNoFactory(t *testing.T) {
 	event := createEvent(nil, eventFactories)
 	assert.Nil(t, event)
 }
+
+func TestProcessEventWorks(t *testing.T) {
+	var handlerCalled = false
+	handlerMap, err := createHandlerMap(
+		[]any{
+			func(ctx context.Context, event *events.APIGatewayProxyRequest) (
+				*events.APIGatewayProxyResponse,
+				error) {
+				handlerCalled = true
+				return &events.APIGatewayProxyResponse{}, nil
+			}})
+	assert.NoError(t, err)
+	assert.NotNil(t, handlerMap)
+
+	var factoryCalled = false
+	cfg := &demuxCfg{
+		factories: []Factory{
+			func(ctx *EventContext) any {
+				factoryCalled = true
+				return &events.APIGatewayProxyRequest{}
+			},
+		},
+		handlerMap: handlerMap,
+	}
+
+	rawEvent := map[string]any{}
+
+	resp, err := processEvent(cfg, context.TODO(), rawEvent)
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.True(t, handlerCalled)
+	assert.True(t, factoryCalled)
+}
