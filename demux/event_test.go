@@ -80,3 +80,42 @@ func TestProcessEventWorks(t *testing.T) {
 	assert.True(t, handlerCalled)
 	assert.True(t, factoryCalled)
 }
+
+func TestProcessEventFailsWithUnhandledEventType(t *testing.T) {
+	handlerMap, err := createHandlerMap(
+		[]any{})
+	assert.NoError(t, err)
+	assert.NotNil(t, handlerMap)
+
+	cfg := &demuxCfg{
+		factories: []Factory{
+			func(ctx *EventContext) any {
+				return &events.APIGatewayProxyRequest{}
+			},
+		},
+		handlerMap: handlerMap,
+	}
+
+	rawEvent := map[string]any{}
+
+	resp, err := processEvent(cfg, context.TODO(), rawEvent)
+	assert.EqualError(t, err, "unable to find handler function for event type events.APIGatewayProxyRequest")
+	assert.Nil(t, resp)
+}
+
+func TestProcessEventFailsWithUnknownEventType(t *testing.T) {
+	handlerMap, err := createHandlerMap([]any{})
+	assert.NoError(t, err)
+	assert.NotNil(t, handlerMap)
+
+	cfg := &demuxCfg{
+		factories:  []Factory{},
+		handlerMap: handlerMap,
+	}
+
+	rawEvent := map[string]any{}
+
+	resp, err := processEvent(cfg, context.TODO(), rawEvent)
+	assert.EqualError(t, err, "unable to determine event type for demux")
+	assert.Nil(t, resp)
+}
