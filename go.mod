@@ -1,4 +1,4 @@
-module go.cloudshiftdev.io/lambdaDemux
+module go.cloudshiftdev.io/aws-lambda-demux
 
 go 1.18
 

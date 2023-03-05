@@ -1,4 +1,4 @@
-package lambdaDemux
+package demux
 
 import (
 	"context"

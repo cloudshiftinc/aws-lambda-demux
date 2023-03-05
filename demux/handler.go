@@ -1,4 +1,4 @@
-package lambdaDemux
+package demux
 
 import (
 	"context"
@@ -64,7 +64,6 @@ func processHandler(handler any) (*handlerFunctionContext, error) {
 	}, nil
 }
 
-
 func createHandlerMap(handlers []any) (map[reflect.Type]reflect.Value, error) {
 
 	handlerMap := map[reflect.Type]reflect.Value{}
@@ -80,7 +79,6 @@ func createHandlerMap(handlers []any) (map[reflect.Type]reflect.Value, error) {
 	}
 	return handlerMap, nil
 }
-
 
 func handlerFunctionError(handlerType reflect.Type, msg string) error {
 	return fmt.Errorf("lambda demux handler function: %s; got %s", msg, handlerType)
