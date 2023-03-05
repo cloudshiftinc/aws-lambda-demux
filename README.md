@@ -2,6 +2,7 @@
 [![Go Reference][3]][4]
 [![GoCard][5]][6]
 [![codecov][7]][8]
+[![Apache V2 License](https://img.shields.io/badge/license-Apache%20V2-blue.svg)](https://github.com/cloudshiftinc/aws-lambda-demux/blob/main/LICENSE)
 
 [1]: https://github.com/cloudshiftinc/aws-lambda-demux/workflows/tests/badge.svg
 [2]: https://github.com/cloudshiftinc/aws-lambda-demux/actions?query=workflow%3Atests
@@ -33,7 +34,7 @@ package main
 
 import (
   "github.com/aws/aws-lambda-go/lambda"
-  "github.com/cloudshiftinc/aws-lambda-demux"
+  "github.com/cloudshiftinc/aws-lambda-demux/demux"
 )
 
 func main() {
