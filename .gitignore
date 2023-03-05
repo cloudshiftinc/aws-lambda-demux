@@ -1,0 +1,10 @@
+
+vendor
+
+.editorconfig
+.idea/
+build/
+.gradle/
+gradle/
+*.kts
+gradle*
