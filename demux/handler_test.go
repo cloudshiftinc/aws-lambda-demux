@@ -199,6 +199,19 @@ func TestHandlerMapCreationFailsWithDuplicateHandler(t *testing.T) {
 	assert.Nil(t, handlerMap)
 }
 
+func TestHandlerMapCreationFailsWithBadHandler(t *testing.T) {
+	handlers := []any{
+		errors.New("hello"),
+	}
+
+	handlerMap, err := createHandlerMap(handlers)
+	assert.EqualError(
+		t,
+		err,
+		"lambda demux handler function: expected a handler function; got *errors.errorString")
+	assert.Nil(t, handlerMap)
+}
+
 func foo() {
 	h := &someHandler{}
 	cfg := &Cfg{
