@@ -167,7 +167,7 @@ func foo() {
 		},
 	}
 
-	lambda.Start(NewDemuxHandler(cfg))
+	lambda.Start(NewHandler(cfg))
 }
 
 type someHandler struct {

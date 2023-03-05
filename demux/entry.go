@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-func NewDemuxHandler(cfg *Cfg) any {
+func NewHandler(cfg *Cfg) any {
 	demuxCfg, err := newDemuxCfg(cfg)
 	if err != nil {
 		return errorHandler(err)
