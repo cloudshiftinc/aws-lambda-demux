@@ -73,7 +73,7 @@ func createHandlerMap(handlers []any) (map[reflect.Type]reflect.Value, error) {
 			return nil, err
 		}
 		if _, ok := handlerMap[ctx.eventType]; ok {
-			return nil, fmt.Errorf("event handler for type %s already provided; %s", ctx.eventType, handler)
+			return nil, fmt.Errorf("event handler for type %s already provided; %s", ctx.eventType, reflect.TypeOf(handler))
 		}
 		handlerMap[ctx.eventType] = ctx.fn
 	}

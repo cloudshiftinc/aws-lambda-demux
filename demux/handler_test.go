@@ -2,6 +2,7 @@ package demux
 
 import (
 	"context"
+	"errors"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/stretchr/testify/assert"
@@ -24,6 +25,13 @@ func TestHandlerValidationWorks(t *testing.T) {
 
 	// ensure event type is as expected
 	assert.Equal(t, reflect.TypeOf((*events.APIGatewayWebsocketProxyRequest)(nil)).Elem(), ctx.eventType)
+}
+
+func TestHandlerFailsWithNonFunction(t *testing.T) {
+	fn := errors.New("hello")
+	ctx, err := processHandler(fn)
+	assert.EqualError(t, err, "lambda demux handler function: expected a handler function; got *errors.errorString")
+	assert.Nil(t, ctx)
 }
 
 func TestHandlerFailsOnTooManyArgs(t *testing.T) {
@@ -148,6 +156,47 @@ func TestHandlerFailsOnSecondReturnValueNotError(t *testing.T) {
 		err,
 		"lambda demux handler function: expected second return value to be 'error'; got func(context.Context, *events.APIGatewayWebsocketProxyRequest) (*events.APIGatewayProxyResponse, int)")
 	assert.Nil(t, ctx)
+}
+
+func TestHandlerMapCreationWorks(t *testing.T) {
+	handlers := []any{
+		func(ctx context.Context, event *events.APIGatewayWebsocketProxyRequest) (
+			*events.APIGatewayProxyResponse,
+			error) {
+			return nil, nil
+		},
+		func(ctx context.Context, event *events.APIGatewayProxyRequest) (
+			*events.APIGatewayProxyResponse,
+			error) {
+			return nil, nil
+		},
+	}
+
+	handlerMap, err := createHandlerMap(handlers)
+	assert.NoError(t, err)
+	assert.NotNil(t, handlerMap)
+}
+
+func TestHandlerMapCreationFailsWithDuplicateHandler(t *testing.T) {
+	handlers := []any{
+		func(ctx context.Context, event *events.APIGatewayProxyRequest) (
+			*events.APIGatewayProxyResponse,
+			error) {
+			return nil, nil
+		},
+		func(ctx context.Context, event *events.APIGatewayProxyRequest) (
+			*events.APIGatewayProxyResponse,
+			error) {
+			return nil, nil
+		},
+	}
+
+	handlerMap, err := createHandlerMap(handlers)
+	assert.EqualError(
+		t,
+		err,
+		"event handler for type events.APIGatewayProxyRequest already provided; func(context.Context, *events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error)")
+	assert.Nil(t, handlerMap)
 }
 
 func foo() {
