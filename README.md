@@ -1,6 +1,6 @@
 [![tests][1]][2]
 [![Go Reference][3]][4]
-[![GoCard][5]][7]
+[![GoCard][5]][6]
 [![codecov][7]][8]
 
 [1]: https://github.com/cloudshiftinc/aws-lambda-demux/workflows/tests/badge.svg
