@@ -2,25 +2,13 @@ package demux
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
-
-//var handlers = []any{
-//	func(ctx context.Context, event *events.APIGatewayWebsocketProxyRequest) (
-//		*events.APIGatewayProxyResponse,
-//		error) {
-//		return nil, nil
-//	},
-//	func(ctx context.Context, event *events.APIGatewayProxyRequest) (
-//		*events.APIGatewayProxyResponse,
-//		error) {
-//		return nil, nil
-//	},
-//}
 
 func TestCreateEventWorks(t *testing.T) {
 	eventFactories := []Factory{
@@ -54,10 +42,10 @@ func TestProcessEventWorks(t *testing.T) {
 	handlerMap, err := createHandlerMap(
 		[]any{
 			func(ctx context.Context, event *events.APIGatewayProxyRequest) (
-				*events.APIGatewayProxyResponse,
+				*events.APIGatewayProxyRequest,
 				error) {
 				handlerCalled = true
-				return &events.APIGatewayProxyResponse{}, nil
+				return event, nil
 			}})
 	assert.NoError(t, err)
 	assert.NotNil(t, handlerMap)
@@ -73,13 +61,26 @@ func TestProcessEventWorks(t *testing.T) {
 		handlerMap: handlerMap,
 	}
 
+	eventJson := `
+{
+	"path": "/foo/bar",
+	"httpMethod": "POST"
+}
+`
+
 	rawEvent := map[string]any{}
+	err = json.Unmarshal([]byte(eventJson), &rawEvent)
+	assert.NoError(t, err)
 
 	resp, err := processEvent(cfg, context.TODO(), rawEvent)
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.True(t, handlerCalled)
 	assert.True(t, factoryCalled)
+	assert.IsType(t, &events.APIGatewayProxyRequest{}, resp)
+	ev, _ := resp.(*events.APIGatewayProxyRequest)
+	assert.Equal(t, "/foo/bar", ev.Path)
+	assert.Equal(t, "POST", ev.HTTPMethod)
 }
 
 func TestProcessEventWorksReturningError(t *testing.T) {

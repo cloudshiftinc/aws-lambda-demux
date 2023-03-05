@@ -36,7 +36,7 @@ func processEvent(
 	// map raw event onto event
 	decoderCfg := &mapstructure.DecoderConfig{
 		Metadata: nil,
-		Result:   eventType,
+		Result:   event,
 		TagName:  "json",
 	}
 	decoder, err := mapstructure.NewDecoder(decoderCfg)
