@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
@@ -210,42 +209,4 @@ func TestHandlerMapCreationFailsWithBadHandler(t *testing.T) {
 		err,
 		"lambda demux handler function: expected a handler function; got *errors.errorString")
 	assert.Nil(t, handlerMap)
-}
-
-func foo() {
-	cfg := &Cfg{
-		Factories: []Factory{
-			func(ctx *EventContext) any {
-				if HasAttribute(ctx.event, "connectionId") {
-					return &events.APIGatewayWebsocketProxyRequest{}
-				}
-				return &events.APIGatewayProxyRequest{}
-			},
-		},
-		Handlers: []any{
-			func(ctx context.Context, event *events.APIGatewayWebsocketProxyRequest) (
-				*events.APIGatewayProxyResponse,
-				error) {
-				// TODO - your code here to handle websocket event
-				return &events.APIGatewayProxyResponse{}, nil
-			},
-			func(ctx context.Context, event *events.APIGatewayProxyRequest) (
-				*events.APIGatewayProxyResponse,
-				error) {
-				// TODO - your code here to handle HTTP/REST event
-				return &events.APIGatewayProxyResponse{}, nil
-			},
-		},
-	}
-
-	lambda.Start(NewHandler(cfg))
-}
-
-type someHandler struct {
-}
-
-func (s *someHandler) HandleEvent(
-	_ context.Context,
-	_ *events.APIGatewayWebsocketProxyRequest) (*events.APIGatewayProxyResponse, error) {
-	return nil, nil
 }
