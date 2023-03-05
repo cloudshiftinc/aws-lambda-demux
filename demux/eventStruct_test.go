@@ -24,6 +24,9 @@ func TestStringAttributeValueWorks(t *testing.T) {
 
 	v = mockEvent.StringAttributeValue("something")
 	assert.Nil(t, v)
+
+	v = mockEvent.StringAttributeValue("missingAttr")
+	assert.Nil(t, v)
 }
 
 func TestStringAttributeMatches(t *testing.T) {
