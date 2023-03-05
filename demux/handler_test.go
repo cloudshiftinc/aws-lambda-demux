@@ -213,18 +213,27 @@ func TestHandlerMapCreationFailsWithBadHandler(t *testing.T) {
 }
 
 func foo() {
-	h := &someHandler{}
 	cfg := &Cfg{
 		Factories: []Factory{
 			func(ctx *EventContext) any {
-				return nil
+				if HasAttribute(ctx.event, "connectionId") {
+					return &events.APIGatewayWebsocketProxyRequest{}
+				}
+				return &events.APIGatewayProxyRequest{}
 			},
 		},
 		Handlers: []any{
 			func(ctx context.Context, event *events.APIGatewayWebsocketProxyRequest) (
 				*events.APIGatewayProxyResponse,
 				error) {
-				return h.HandleEvent(ctx, event)
+				// TODO - your code here to handle websocket event
+				return &events.APIGatewayProxyResponse{}, nil
+			},
+			func(ctx context.Context, event *events.APIGatewayProxyRequest) (
+				*events.APIGatewayProxyResponse,
+				error) {
+				// TODO - your code here to handle HTTP/REST event
+				return &events.APIGatewayProxyResponse{}, nil
 			},
 		},
 	}

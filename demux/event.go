@@ -11,14 +11,14 @@ import (
 type Factory func(ctx *EventContext) any
 
 type EventContext struct {
-	event           RawEvent
-	resourceContext RawResourceContext
+	event           map[string]any
+	resourceContext map[string]any
 }
 
 func processEvent(
 	cfg *demuxCfg,
 	ctx context.Context,
-	rawEvent RawEvent) (any, error) {
+	rawEvent map[string]any) (any, error) {
 	event := createEvent(rawEvent, cfg.factories)
 	if event == nil {
 		return nil, errors.New("unable to determine event type for demux")
@@ -60,14 +60,14 @@ func processEvent(
 	return returnValues[0].Interface(), nil
 }
 
-func createEvent(rawEvent RawEvent, eventFactories []Factory) any {
+func createEvent(rawEvent map[string]any, eventFactories []Factory) any {
 	if rawEvent == nil {
-		rawEvent = RawEvent{}
+		rawEvent = map[string]any{}
 	}
 
-	rawResourceContext, ok := rawEvent["resourceContext"].(RawResourceContext)
+	rawResourceContext, ok := rawEvent["resourceContext"].(map[string]any)
 	if !ok {
-		rawResourceContext = RawResourceContext{}
+		rawResourceContext = map[string]any{}
 	}
 
 	ctx := &EventContext{

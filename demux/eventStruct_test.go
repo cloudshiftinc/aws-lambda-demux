@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-var mockEvent EventStruct = map[string]any{
+var mockEvent = map[string]any{
 	"abc":           "def",
 	"something":     true,
 	"somethingElse": 5,
@@ -13,24 +13,24 @@ var mockEvent EventStruct = map[string]any{
 }
 
 func TestHasAttributeWorks(t *testing.T) {
-	assert.True(t, mockEvent.HasAttribute("abc"))
-	assert.False(t, mockEvent.HasAttribute("def"))
+	assert.True(t, HasAttribute(mockEvent, "abc"))
+	assert.False(t, HasAttribute(mockEvent, "def"))
 }
 
 func TestStringAttributeValueWorks(t *testing.T) {
-	v := mockEvent.StringAttributeValue("abc")
+	v := StringAttributeValue(mockEvent, "abc")
 	assert.NotNil(t, v)
 	assert.Equal(t, "def", *v)
 
-	v = mockEvent.StringAttributeValue("something")
+	v = StringAttributeValue(mockEvent, "something")
 	assert.Nil(t, v)
 
-	v = mockEvent.StringAttributeValue("missingAttr")
+	v = StringAttributeValue(mockEvent, "missingAttr")
 	assert.Nil(t, v)
 }
 
 func TestStringAttributeMatches(t *testing.T) {
-	assert.True(t, mockEvent.StringAttributeMatches("abc", "def"))
-	assert.False(t, mockEvent.StringAttributeMatches("abc", "xxxf"))
-	assert.False(t, mockEvent.StringAttributeMatches("something", "true"))
+	assert.True(t, StringAttributeMatches(mockEvent, "abc", "def"))
+	assert.False(t, StringAttributeMatches(mockEvent, "abc", "xxxf"))
+	assert.False(t, StringAttributeMatches(mockEvent, "something", "true"))
 }

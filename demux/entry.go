@@ -10,7 +10,7 @@ func NewHandler(cfg *Cfg) any {
 		return errorHandler(err)
 	}
 
-	return func(ctx context.Context, rawEvent RawEvent) (any, error) {
+	return func(ctx context.Context, rawEvent map[string]any) (any, error) {
 		return processEvent(demuxCfg, ctx, rawEvent)
 	}
 }
