@@ -2,24 +2,25 @@ package demux
 
 import (
 	"context"
+	"errors"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
 
-var handlers = []any{
-	func(ctx context.Context, event *events.APIGatewayWebsocketProxyRequest) (
-		*events.APIGatewayProxyResponse,
-		error) {
-		return nil, nil
-	},
-	func(ctx context.Context, event *events.APIGatewayProxyRequest) (
-		*events.APIGatewayProxyResponse,
-		error) {
-		return nil, nil
-	},
-}
+//var handlers = []any{
+//	func(ctx context.Context, event *events.APIGatewayWebsocketProxyRequest) (
+//		*events.APIGatewayProxyResponse,
+//		error) {
+//		return nil, nil
+//	},
+//	func(ctx context.Context, event *events.APIGatewayProxyRequest) (
+//		*events.APIGatewayProxyResponse,
+//		error) {
+//		return nil, nil
+//	},
+//}
 
 func TestCreateEventWorks(t *testing.T) {
 	eventFactories := []Factory{
@@ -79,6 +80,33 @@ func TestProcessEventWorks(t *testing.T) {
 	assert.NotNil(t, resp)
 	assert.True(t, handlerCalled)
 	assert.True(t, factoryCalled)
+}
+
+func TestProcessEventWorksReturningError(t *testing.T) {
+	handlerMap, err := createHandlerMap(
+		[]any{
+			func(ctx context.Context, event *events.APIGatewayProxyRequest) (
+				*events.APIGatewayProxyResponse,
+				error) {
+				return &events.APIGatewayProxyResponse{}, errors.New("hello this is an error")
+			}})
+	assert.NoError(t, err)
+	assert.NotNil(t, handlerMap)
+
+	cfg := &demuxCfg{
+		factories: []Factory{
+			func(ctx *EventContext) any {
+				return &events.APIGatewayProxyRequest{}
+			},
+		},
+		handlerMap: handlerMap,
+	}
+
+	rawEvent := map[string]any{}
+
+	resp, err := processEvent(cfg, context.TODO(), rawEvent)
+	assert.EqualError(t, err, "hello this is an error")
+	assert.Nil(t, resp)
 }
 
 func TestProcessEventFailsWithUnhandledEventType(t *testing.T) {
