@@ -11,4 +11,5 @@ These versions will receive security updates:
 
 ## Reporting a Vulnerability
 
-Please report security vulnerabilities to security@cloudshiftconsulting.com.  Please DO NOT create public GitHub issues for security items.
+If you discover a potential security issue in this project we ask that you notify our security team via [security@cloudshiftconsulting.com](mailto:security@cloudshiftconsulting.com). 
+Please do **not** create public GitHub issues for security concerns.
