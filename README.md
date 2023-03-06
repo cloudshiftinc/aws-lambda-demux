@@ -19,7 +19,7 @@ Library to help Go developers handle multiple types of events (de-multiplexing) 
 
 The primary function of this library is to create events of a specific type and dispatch those to appropriate handlers.
 
-To do so the demuxxer is configured with `Factory` and `Handler` instances.
+To do so the demuxer is configured with `Factory` and `Handler` instances.
 
 Factories are responsible for determining the type of the event (based off the incoming JSON) and creating an instance of that event.
 
