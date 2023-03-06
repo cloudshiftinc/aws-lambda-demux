@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/mitchellh/mapstructure"
 	"reflect"
 )
@@ -33,26 +34,35 @@ func processEvent(
 		return nil, fmt.Errorf("unable to find handler function for event type %s", eventType)
 	}
 
-	// map raw event onto event
-	decoderCfg := &mapstructure.DecoderConfig{
-		Metadata: nil,
-		Result:   event,
-		TagName:  "json",
-	}
-	decoder, err := mapstructure.NewDecoder(decoderCfg)
-	if err != nil {
-		return nil, err
-	}
-	err = decoder.Decode(rawEvent)
-	if err != nil {
-		return nil, err
-	}
+	var returnValues []reflect.Value
+	err := xray.Capture(
+		ctx, fmt.Sprintf("event: %s", eventType), func(ctx context.Context) error {
+			// map raw event onto event
+			decoderCfg := &mapstructure.DecoderConfig{
+				Metadata: nil,
+				Result:   event,
+				TagName:  "json",
+			}
+			decoder, err := mapstructure.NewDecoder(decoderCfg)
+			if err != nil {
+				return err
+			}
+			err = decoder.Decode(rawEvent)
+			if err != nil {
+				return err
+			}
 
-	// dispatch event to handler function
-	args := make([]reflect.Value, 2)
-	args[0] = reflect.ValueOf(ctx)
-	args[1] = reflect.ValueOf(event)
-	returnValues := handlerFn.Call(args)
+			// dispatch event to handler function
+			args := make([]reflect.Value, 2)
+			args[0] = reflect.ValueOf(ctx)
+			args[1] = reflect.ValueOf(event)
+			returnValues = handlerFn.Call(args)
+			return nil
+		})
+
+	if err != nil {
+		return nil, err
+	}
 
 	if errVal, ok := returnValues[1].Interface().(error); ok && errVal != nil {
 		return nil, errVal
