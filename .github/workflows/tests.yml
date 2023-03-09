@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ "~1.19", "stable", "oldstable", "^1"]
+        go: [ "stable", "oldstable" ]
 
     steps:
       - name: Check out code into the Go module directory
@@ -23,7 +23,7 @@ jobs:
           cache: true
 
       - name: go test
-        run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+        run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
