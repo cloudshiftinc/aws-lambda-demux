@@ -9,9 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go:
-          - "1.20"
-          - "1.19"
+        go: [ "~1.19", "stable", "oldstable", "^1"]
 
     steps:
       - name: Check out code into the Go module directory
@@ -23,8 +21,6 @@ jobs:
           go-version: ${{ matrix.go }}
           check-latest: true
           cache: true
-
-      - run: go version
 
       - name: go test
         run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
