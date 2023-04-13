@@ -12,8 +12,8 @@ import (
 type Factory func(ctx *EventContext) any
 
 type EventContext struct {
-	event           map[string]any
-	resourceContext map[string]any
+	Event           map[string]any
+	ResourceContext map[string]any
 }
 
 func processEvent(
@@ -81,8 +81,8 @@ func createEvent(rawEvent map[string]any, eventFactories []Factory) any {
 	}
 
 	ctx := &EventContext{
-		event:           rawEvent,
-		resourceContext: rawResourceContext,
+		Event:           rawEvent,
+		ResourceContext: rawResourceContext,
 	}
 
 	for _, eventFactory := range eventFactories {
