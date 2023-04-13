@@ -42,7 +42,7 @@ func main() {
   cfg := &demux.Cfg{
     Factories: []demux.Factory{
       func(ctx *demux.EventContext) any {
-        if demux.HasAttribute(ctx.event, "connectionId") {
+        if demux.HasAttribute(ctx.Event, "connectionId") {
           return &events.APIGatewayWebsocketProxyRequest{}
         }
         return &events.APIGatewayProxyRequest{}
